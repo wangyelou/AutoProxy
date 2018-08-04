@@ -5,3 +5,4 @@ define('EXT','php');
 define('IP', '0.0.0.0');
 define('PORT', 9230);
 define('WORK_NUM', 1);
+define('TASK_WORK_NUM', 2);
