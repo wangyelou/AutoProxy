@@ -4,5 +4,5 @@ define('BASE_PATH',dirname(dirname(__FILE__)).SEPATATOR);
 define('EXT','php');
 define('IP', '0.0.0.0');
 define('PORT', 9230);
-define('WORK_NUM', 1);
-define('TASK_WORK_NUM', 2);
+define('WORK_NUM', 5);
+define('TASK_WORK_NUM', 100);

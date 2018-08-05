@@ -1,6 +1,7 @@
 <?php
 require_once 'config/autoloader.php';
 
+swoole_set_process_name('AutoProxy');
 $server = new swoole_server(IP, PORT);
 $server->set(array(
 	'worker_num' => WORK_NUM,

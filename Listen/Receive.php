@@ -9,7 +9,7 @@ class Receive
 		\Helper\Log::write(__CLASS__, "已接收到数据{$data}");
 		$serv->send($fd, "发送数据给你");
 
-		$serv->task("发送task给你");
+		$serv->task("发送task给你_{$data}");
 	}
 
 }
