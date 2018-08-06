@@ -4,12 +4,12 @@ namespace Listen;
 class Start 
 {
 	
-	public function run()
+	public function run(\swoole_server $serv)
 	{
 		\Helper\Log::write(__CLASS__, 'start');
 
-		$task = new \Task\CoderbusyProxy();
-		$task->run();
+
+
 
 	}
 
