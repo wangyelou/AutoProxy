@@ -3,21 +3,84 @@ namespace Listen;
 
 class WorkStart 
 {
+
+	//运行任务池
+	private $taskPool = array();
+
 	public function run(\swoole_server $serv)
 	{
 		if ($serv->worker_id === 0) {
 			\Helper\Log::write(__CLASS__, 'WorkStart');
-			$timerId = $serv->after(1000, function() {
-				 $task = new \Task\CoderbusyProxy();
-				 $task->run();
+
+			//监控ip池，空则调用
+			$timerId = $serv->tick(1000, function ($timeId, $workStart) {		
+				if (\Helper\Utility::proxyTable()->count() == 0) {
+
+					foreach ($this->getTasks() as $task) {
+						//启动任务
+						if (!\Helper\Utility::taskPool()->get($task)) {
+							if ($this->startTask($task)) {
+								\Helper\Log::write(__CLASS__, "task {$task} start success");
+							} else {
+								\Helper\Log::write(__CLASS__, "task {$task} start failed");
+							}
+						}
+					}
+				}
+			}, $this);
+
+
+
+			//回收子进程
+			\swoole_process::signal(SIGCHLD, function($sig) {
+			  	//必须为false，非阻塞模式
+				  while($ret =  \swoole_process::wait(false)) {
+					  	foreach (\Helper\Utility::taskPool() as $key => $item) {
+					  		if ($item['pid'] == $ret['pid']) {
+					      		\Helper\Utility::taskPool()->del($key);
+								\Helper\Log::write(__CLASS__, "task {$key} finished");
+					  		}
+					  	}
+				  }
 			});
-			var_dump($timerId);
 		}
+	}
+
+	/**
+	 * 启动任务
+	 * @param  string $task 任务名
+	 * @return [type]       [description]
+	 */
+	private function startTask($task)
+	{
+		$process = new \swoole_process(function (\swoole_process $process) use ($task) {
+			$process->name(PROJECT_NAME . ' -task ' . $task);
+			\Helper\Utility::taskPool()->set($task, array('pid'=>$process->pid));
+
+			$class = '\Task\\' . $task;
+			$task = new $class();
+			$task->run();
+
+		}, false);
+		return $process->start();
+	}
 
 
-		//var_dump($result);
-
-
+	/**
+	 * 获取task列表
+	 * @return [type] [description]
+	 */
+	public function getTasks()
+	{
+		$files = scandir(BASE_PATH . 'Task' . SEPATATOR);
+		foreach ($files as $key => $file) {
+			if ($file == '.' || $file == '..' || $file == 'ProxyAbstract.php') {
+				unset($files[$key]);
+			} else {
+				list($files[$key]) = explode('.', $file);
+			}
+		}
+		return $files;
 	}
 
 

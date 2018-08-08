@@ -1,4 +1,5 @@
 <?php
+define('PROJECT_NAME','AutoProxy');
 define('SEPATATOR', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'?'\\':'/');
 define('BASE_PATH',dirname(dirname(__FILE__)).SEPATATOR);
 define('EXT','php');

@@ -47,12 +47,12 @@ class CoderbusyProxy extends \Task\ProxyAbstract
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_PROXY, '192.155.185.18');
-			curl_setopt($ch, CURLOPT_PROXYPORT, 80);
+			//curl_setopt($ch, CURLOPT_PROXY, '192.155.185.18');
+			//curl_setopt($ch, CURLOPT_PROXYPORT, 80);
 			if (($result = curl_exec($ch)) === false) {
-				throw new Exception(curl_error($ch));
+				throw new \Exception(curl_error($ch));
 			}
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$this->log($e->getMessage());
 		}
 		curl_close($ch);

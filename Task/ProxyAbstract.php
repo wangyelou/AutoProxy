@@ -30,8 +30,6 @@ class ProxyAbstract
 	 */
 	protected function checkProxy($data)
 	{
-		$data['ip'] = '192.155.185.18';
-		$data['port'] = '80';
 		try {
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, 'https://www.baidu.com/');
