@@ -7,15 +7,28 @@ class Receive
 	public function run(\swoole_server $serv, $fd, $from_id, $receiveData)
 	{
 		$table = \Helper\Utility::proxyTable();
-		$rand = mt_rand(0, $table->count()-1);
-		$i = 0;
-		foreach ($table as $key => $item) {
-			if ($i++ == $rand) {
-				$data = $item;
-				break;
+
+		$data = array();
+		if ($receiveData) {
+			if ($param = json_decode($receiveData, true)) {
+				if ($param['type'] == 'all') {
+					foreach ($table as $key => $item) {
+						$data[] = $item;
+					}					
+				} else if ($param['type'] == 'single') {
+					$rand = mt_rand(0, $table->count()-1);
+					$i = 0;
+					foreach ($table as $key => $item) {
+						if ($i++ == $rand) {
+							$data = $item;
+							break;
+						}
+					}
+				}
 			}
 		}
-		$serv->send($fd, $this->formatSend(isset($data) ? $data : NULL));
+
+		$serv->send($fd, $this->formatSend($data));
 	}
 
 	/**
@@ -25,7 +38,7 @@ class Receive
 	 */
 	private function formatSend($data)
 	{
-		if (is_null($data)) {
+		if (count($data) == 0) {
 			$code = '-1';
 			$msg = 'get ip failed';
 			$data = array();

@@ -1,15 +1,15 @@
 <?php
 namespace Task;
 /**
- * 码农代理
- * https://proxy.coderbusy.com/classical/country/cn.aspx?page=33
+ * XiciDaili
+ * http://www.xicidaili.com/wn/1
  * @author wangyelou 
- * @date 2018-08-05
+ * @date 2018-08-09
  */
-class CoderbusyProxy extends \Task\ProxyAbstract
+class XiciProxy extends \Task\ProxyAbstract
 {
-	private $url = 'https://proxy.coderbusy.com/article/2498.aspx';
-	private $expression = '/([^\:^\n]+)\:(\d+)\@([A-Z]+)\#\[([^\]]+)\]([^\#^<]+)(\#支持HTTPS)?(\#支持POST)?/is';
+	private $url = 'http://www.xicidaili.com/wn/1';
+	private $expression = '/<tr\s+class="odd">\s*<td[^>]+>\s*<img[^>]+>\s*<\/td>\s*<td[^>]*>([^<]+)<\/td>\s*<td[^>]*>([^<]+)<\/td>\s*<td[^>]*>\s*<a[^>]*>([^>]+)<\/a>\s*<\/td>\s*<td[^>]*>([^<]+)<\/td>\s*<td[^>]*>([^<]+)<\/td>/is';
 
 	public function run()
 	{
@@ -19,11 +19,11 @@ class CoderbusyProxy extends \Task\ProxyAbstract
 				$data = array(
 					'ip' => trim(strip_tags($matches[1][$key])),
 					'port' => trim($matches[2][$key]),
-					'location' => trim($matches[5][$key]),
-					'type' => trim($matches[3][$key]),
+					'location' => trim($matches[3][$key]),
+					'type' => trim($matches[5][$key]),
 					'transparency' => trim($matches[4][$key]),
-					'https' => empty($matches[6][$key]) ? false : true,
-					'post' => empty($matches[7][$key]) ? false : true,
+					'https' => true,
+					'post' => false,
 				);
 				if ($data = $this->checkProxy($data)) {
 					$this->setTable($data);

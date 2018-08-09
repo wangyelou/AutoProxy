@@ -9,8 +9,6 @@ class Start
 		\Helper\Log::write(__CLASS__, 'start');
 
 
-
-
 	}
 
 }
