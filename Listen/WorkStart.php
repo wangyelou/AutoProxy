@@ -13,22 +13,37 @@ class WorkStart
 			\Helper\Log::write(__CLASS__, 'WorkStart');
 
 			//监控ip池，空则调用
-			$timerId = $serv->tick(1000, function ($timeId, $workStart) {		
+			$serv->tick(1000, function ($timeId, $workStart) {		
 				if (\Helper\Utility::proxyTable()->count() == 0) {
 
 					foreach ($this->getTasks() as $task) {
 						//启动任务
 						if (!\Helper\Utility::taskPool()->get($task)) {
 							if ($this->startTask($task)) {
-								\Helper\Log::write(__CLASS__, "task {$task} start success");
+								\Helper\Log::write('task_run', "task {$task} start success");
 							} else {
-								\Helper\Log::write(__CLASS__, "task {$task} start failed");
+								\Helper\Log::write('task_run', "task {$task} start failed");
 							}
 						}
 					}
 				}
 			}, $this);
 
+			//ip池ip检测
+			$serv->tick(1000, function($timerId) {
+				$proxyTable = \Helper\Utility::proxyTable();
+				if ($proxyTable->count() > 0) {
+					\Helper\Log::write('ip_check', 'ip检测');
+					foreach ($proxyTable as $key => $item) {
+						try {
+							\Helper\Utility::checkProxy($item);
+						} catch (\Exception $e) {
+							\Helper\Log::write('ip_check', "[{$item['ip']}:{$item['port']}] 剔除ip池，". $e->getMessage());
+							$proxyTable->del($key);
+						}
+					}
+				}
+			});
 
 
 			//回收子进程

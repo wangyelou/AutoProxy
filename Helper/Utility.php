@@ -44,5 +44,32 @@ class Utility
 		return self::$task;
 	}
 
+	/**
+	 * 代理检测
+	 * @param  array $data [description]
+	 * @return [type]       [description]
+	 */
+	public static function checkProxy($data)
+	{
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, 'https://www.baidu.com/');
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_PROXY, $data['ip']);
+		curl_setopt($ch, CURLOPT_PROXYPORT, $data['port']);
+		$startTime = microtime(true);
+		if (($result = curl_exec($ch)) === false) {
+			throw new \Exception(curl_error($ch));
+		}
+		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		if ($httpcode > 400) {
+			throw new \Exception("HTTP CODE {$httpcode}");
+		}
+		$data['consume'] = round((microtime(true) - $startTime) * 1000, 2);
+		curl_close($ch);
+		return $data;
+	}
+
 
 }

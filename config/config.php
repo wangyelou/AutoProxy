@@ -2,6 +2,7 @@
 define('PROJECT_NAME','AutoProxy');
 define('SEPATATOR', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'?'\\':'/');
 define('BASE_PATH',dirname(dirname(__FILE__)).SEPATATOR);
+define('LOG_PATH',BASE_PATH . 'Logs' .SEPATATOR);
 define('EXT','php');
 define('IP', '0.0.0.0');
 define('PORT', 9230);

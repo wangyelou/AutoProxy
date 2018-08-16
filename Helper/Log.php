@@ -5,7 +5,8 @@ class Log
 {
 	public static function write($type, $msg)
 	{
-		echo date('Y-m-d H:i:s') . ' ' . $msg . PHP_EOL;
+		$content = date('Y-m-d H:i:s') . ' ' . $msg . PHP_EOL;
+		file_put_contents(LOG_PATH . $type. '.log', $content, FILE_APPEND);
 	}
 
 }
